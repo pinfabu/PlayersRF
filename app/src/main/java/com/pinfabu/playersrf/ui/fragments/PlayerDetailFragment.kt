@@ -1,5 +1,6 @@
 package com.pinfabu.playersrf.ui.fragments
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pinfabu.playersrf.R
 import com.pinfabu.playersrf.application.PlayersRFApp
 import com.pinfabu.playersrf.data.PlayerRepository
 import com.pinfabu.playersrf.data.remote.model.PlayersDetailDto
@@ -52,6 +56,11 @@ class PlayerDetailFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // Reproducir el sonido aquí
+        val mediaPlayer = MediaPlayer.create(requireContext(), R.raw.golsound)
+        mediaPlayer.start()
+
+
         super.onViewCreated(view, savedInstanceState)
 
         //Programar la conexión
@@ -75,6 +84,22 @@ class PlayerDetailFragment : Fragment() {
                             tvAge.append(response.body()?.age.toString())
                             tvFoot.append(response.body()?.foot)
                             tvBaloondor.append(response.body()?.ballondor)
+                            // Cargar el video en YouTubePlayerView
+                            youtubePlayerView.addYouTubePlayerListener(object :
+                                AbstractYouTubePlayerListener() {
+                                override fun onReady(youTubePlayer: YouTubePlayer) {
+                                    // Cargar el video cuando el reproductor esté listo
+                                    response.body()?.ytVideo?.let { videoId ->
+                                        youTubePlayer.loadVideo(videoId, 0f)
+                                    } ?: run {
+                                        // Si no se puede cargar el video, cargar un video por defecto
+                                        youTubePlayer.loadVideo("0AwxHCI_BnA", 0f)
+                                    }
+
+
+                                }
+                            })
+
 
                         }
                     }

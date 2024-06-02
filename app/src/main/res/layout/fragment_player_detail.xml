@@ -132,6 +132,17 @@
                         android:textColor="@color/white"
                         android:textSize="20sp"
                         android:text="Number of Baloon Dor: " />
+
+                    <!-- Agrega el reproductor de video al final -->
+                    <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                        android:id="@+id/youtube_player_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvBaloondor" />
+
                 </LinearLayout>
             </ScrollView>
 
