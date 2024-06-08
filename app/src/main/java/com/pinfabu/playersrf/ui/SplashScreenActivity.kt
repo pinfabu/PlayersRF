@@ -21,7 +21,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         // Ejemplo: espera 2 segundos y luego abre la actividad principal
         Handler().postDelayed({
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, Login::class.java)
             startActivity(intent)
             finish()
         }, 2000) // 2000 milisegundos = 2 segundos

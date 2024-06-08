@@ -9,6 +9,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pinfabu.playersrf.R
@@ -21,6 +24,11 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+
 
 private const val PLAYER_ID = "player_id"
 
@@ -31,6 +39,9 @@ class PlayerDetailFragment : Fragment() {
     private var player_id: String? = null
 
     private lateinit var repository: PlayerRepository
+
+    //Para tener una instancia al mapa de manera global
+    private lateinit var map: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +70,6 @@ class PlayerDetailFragment : Fragment() {
         // Reproducir el sonido aquí
         val mediaPlayer = MediaPlayer.create(requireContext(), R.raw.golsound)
         mediaPlayer.start()
-
 
         super.onViewCreated(view, savedInstanceState)
 
@@ -96,6 +106,10 @@ class PlayerDetailFragment : Fragment() {
                                         youTubePlayer.loadVideo("0AwxHCI_BnA", 0f)
                                     }
 
+                                    // Inicializar el mapa después de que el reproductor de YouTube esté listo
+                                    response.body()?.let { playerDetail ->
+                                        initializeMap(playerDetail.lat ?: 0.0, playerDetail.long ?: 0.0)
+                                    }
 
                                 }
                             })
@@ -126,5 +140,36 @@ class PlayerDetailFragment : Fragment() {
                     putString(PLAYER_ID, gameId)
                 }
             }
+    }
+
+    private fun initializeMap(lat: Double, long: Double) {
+        val mapFragment =
+            childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync { googleMap ->
+            // Aquí puedes realizar operaciones con el mapa una vez que esté listo
+            map = googleMap
+            createMarker(lat, long)
+            // Por ejemplo, puedes establecer la configuración del mapa aquí
+            // map.uiSettings.isZoomControlsEnabled = true
+        }
+    }
+
+
+    private fun createMarker(lat: Double, long: Double){
+        val coordinates = LatLng(lat, long)
+
+        val marker = MarkerOptions()
+            .position(coordinates)
+            .title("Estadio jugador")
+            .snippet("FIFA")
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.school))
+
+        map.addMarker(marker)
+
+        map.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(coordinates, 16f),
+            4000,
+            null
+        )
     }
 }

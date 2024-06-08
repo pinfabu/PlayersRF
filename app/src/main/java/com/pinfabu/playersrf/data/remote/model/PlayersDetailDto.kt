@@ -22,5 +22,9 @@ data class PlayersDetailDto(
     @SerializedName("url_image")
     val urlImage: String? = null,
     @SerializedName("yt_video")
-    val ytVideo: String? = null
+    val ytVideo: String? = null,
+    @SerializedName("lat")
+    val lat: Double? = null,
+    @SerializedName("long")
+    val long: Double? = null,
 )
